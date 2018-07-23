@@ -116,7 +116,7 @@ public extension LifetimeTrackable {
 
 @objc public final class LifetimeTracker: NSObject {
     public typealias UpdateClosure = (_ trackedGroups: [String: LifetimeTracker.EntriesGroup]) -> Void
-    public typealias LeakClosure = (_ configuration: LifetimeConfiguration, _ count: Int) -> Void
+    public typealias LeakClosure = (_ instanceName: String, _ count: Int, _ maxCount: Int) -> Void
     public internal(set) static var instance: LifetimeTracker?
     private let lock = NSRecursiveLock()
     
@@ -235,7 +235,7 @@ public extension LifetimeTrackable {
             let group = self.trackedGroups[groupName] ?? EntriesGroup(name: groupName)
             group.updateEntry(configuration, with: countDelta)
             if let entry = group.entries[configuration.instanceName], entry.count > entry.maxCount {
-                self.onLeakDetected?(configuration, entry.count)
+                self.onLeakDetected?(configuration.instanceName, entry.count, configuration.maxCount)
             }
 
             self.trackedGroups[groupName] = group

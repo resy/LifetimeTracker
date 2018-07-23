@@ -146,9 +146,9 @@ class LifetimeTrackerTests: XCTestCase {
 
     func testLeakClosure() {
         var hasLeaked = false
-        LifetimeTracker.instance?.onLeakDetected = { config, count in
+        LifetimeTracker.instance?.onLeakDetected = { instanceName, count, maxCount in
             hasLeaked = true
-            print("POSSIBLE LEAK ALERT: \(config.instanceName), current count: \(count), max count: \(config.maxCount)")
+            print("POSSIBLE LEAK ALERT: \(instanceName) - current count: \(count), max count: \(maxCount)")
         }
 
         TrackableObject.lifetimeConfiguration = LifetimeConfiguration(maxCount: 1)
