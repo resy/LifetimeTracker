@@ -9,8 +9,8 @@ import UIKit
 
 fileprivate extension String {
     #if swift(>=4.0)
-    typealias AttributedStringKey = NSAttributedStringKey
-    static let foregroundColorAttributeName = NSAttributedStringKey.foregroundColor
+    typealias AttributedStringKey = NSAttributedString.Key
+    static let foregroundColorAttributeName = NSAttributedString.Key.foregroundColor
     #else
     typealias AttributedStringKey = String
     static let foregroundColorAttributeName = NSForegroundColorAttributeName
@@ -30,7 +30,7 @@ extension NSAttributedString {
 }
 
 typealias EntryModel = (color: UIColor, description: String)
-typealias GroupModel = (color: UIColor, title: String, entries: [EntryModel])
+typealias GroupModel = (color: UIColor, title: String, groupName: String, groupCount: Int, groupMaxCount: Int, entries: [EntryModel])
 
 @objc public final class LifetimeTrackerDashboardIntegration: NSObject {
 
@@ -66,7 +66,7 @@ typealias GroupModel = (color: UIColor, title: String, entries: [EntryModel])
 
     private lazy var window: UIWindow = {
         let window = UIWindow(frame: .zero)
-        window.windowLevel = UIWindowLevelStatusBar
+        window.windowLevel = UIWindow.Level.statusBar
         window.frame =  UIScreen.main.bounds
         window.rootViewController = self.lifetimeTrackerView
         return window
@@ -149,7 +149,7 @@ typealias GroupModel = (color: UIColor, title: String, entries: [EntryModel])
                         let description = "\(entry.name) (\(entry.count)/\(entryMaxCountString)):\n\(entry.pointers.joined(separator: ", "))"
                         rows.append((color: color, description: description))
                 }
-                sections.append((color: groupColor, title: title, entries: rows))
+                sections.append((color: groupColor, title: title, groupName: "\(group.name ?? "dashboard.sectionHeader.title.noGroup".lt_localized)", groupCount: group.count, groupMaxCount: group.maxCount, entries: rows))
         }
         return (groups: sections, leaksCount: leaksCount)
     }
