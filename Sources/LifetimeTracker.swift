@@ -84,7 +84,7 @@ import Foundation
     internal static func makeCompleteConfiguration(with instance: LifetimeTrackable) -> LifetimeConfiguration {
         let instanceType = type(of: instance)
         let configuration = instanceType.lifetimeConfiguration
-        configuration.instanceName = String(describing: instanceType)
+        configuration.instanceName = String(reflecting: instanceType)
         configuration.pointerString = "\(Unmanaged<AnyObject>.passUnretained(instance as AnyObject).toOpaque())"
         return configuration
     }
@@ -122,16 +122,16 @@ public extension LifetimeTrackable {
     
     internal var trackedGroups = [String: EntriesGroup]()
     
-    enum LifetimeState {
+    public enum LifetimeState {
         case valid
         case leaky
     }
     
     public final class Entry {
-        var maxCount: Int
-        let name: String
-        fileprivate(set) var count: Int
-        fileprivate(set) var pointers: Set<String>
+        public fileprivate(set) var maxCount: Int
+        public let name: String
+        public fileprivate(set) var count: Int
+        public fileprivate(set) var pointers: Set<String>
         
         init(name: String, maxCount: Int) {
             self.maxCount = maxCount
@@ -149,16 +149,16 @@ public extension LifetimeTrackable {
             }
         }
         
-        var lifetimeState: LifetimeState {
+        public var lifetimeState: LifetimeState {
             return count > maxCount ? .leaky : .valid
         }
     }
     
     @objc public final class EntriesGroup: NSObject {
-        var maxCount: Int = 0
-        var name: String? = nil
-        fileprivate(set) var count: Int = 0
-        fileprivate(set) var entries = [String: Entry]()
+        public fileprivate(set) var maxCount: Int = 0
+        public fileprivate(set) var name: String? = nil
+        public fileprivate(set) var count: Int = 0
+        public fileprivate(set) var entries = [String: Entry]()
         private var usedMaxCountOverride = false
         
         init(name: String) {
@@ -167,7 +167,7 @@ public extension LifetimeTrackable {
             }
         }
         
-        var lifetimeState: LifetimeState {
+        public var lifetimeState: LifetimeState {
             // Mark the group as leaky if the count per group highter than it's max count
             guard count <= maxCount else {
                 return .leaky
@@ -225,7 +225,7 @@ public extension LifetimeTrackable {
         
         let instanceType = type(of: instance)
         var configuration = configuration
-        configuration.instanceName = String(describing: instanceType)
+        configuration.instanceName = String(reflecting: instanceType)
         configuration.pointerString = "\(Unmanaged<AnyObject>.passUnretained(instance as AnyObject).toOpaque())"
         
         func update(_ configuration: LifetimeConfiguration, with countDelta: Int) {

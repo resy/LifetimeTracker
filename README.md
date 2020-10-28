@@ -25,7 +25,7 @@ Add `github "krzysztofzablocki/LifetimeTracker"` to your Cartfile.
 
 ## Integration
 
-To Integrate visual notifications simply add following line at the start of `AppDelegate(didFinishLaunchingWithOptions:)`.
+To Integrate visual notifications simply add following line at the start of `AppDelegate(didFinishLaunchingWithOptions:)` or if you are using iOS 13+ SceneDelegates in `scene(willConnectTo:options:)`.
 
 Swift:
 
@@ -60,8 +60,9 @@ You conform to `LifetimeTrackable` and call `trackLifetime()` at the end of your
 
 ```swift
 class SectionFrontViewController: UIViewController, LifetimeTrackable {
-    static var lifetimeConfiguration = LifetimeConfiguration(maxCount: 1, groupName: "VC")
-
+    class var lifetimeConfiguration: LifetimeConfiguration {
+        return LifetimeConfiguration(maxCount: 1, groupName: "VC")
+    }
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         /// ...
